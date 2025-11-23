@@ -17,16 +17,16 @@ async def processar_corrida(msg: dict):
     id_corrida = msg.get('id_corrida') 
 
     try:
-        
+        # 1. Atualiza Saldo no Redis (Operação Atômica)
         chave_saldo = f"saldo:{motorista_nome.lower()}"
         novo_saldo = await redis.incrbyfloat(chave_saldo, valor)
         
         print(f"💰 [Redis] Saldo de {motorista_nome} atualizado para: {novo_saldo}")
 
-       
-        
+        # 2. Atualiza Status no MongoDB
+        # CORREÇÃO: Usamos o campo 'id_corrida' para filtrar, e não o '_id'
         resultado = await db.corridas.update_one(
-            {"_id": id_corrida},
+            {"id_corrida": id_corrida},
             {
                 "$set": {
                     "status": "processada",
@@ -38,9 +38,8 @@ async def processar_corrida(msg: dict):
         if resultado.modified_count > 0:
             print(f"✅ [Mongo] Status da corrida {id_corrida} atualizado para 'processada'.")
         else:
-            
+            # Caso não encontre (pode acontecer se o ID estiver errado ou delay na escrita)
             print(f"⚠️ [Mongo] Corrida {id_corrida} não encontrada para atualização.")
 
     except Exception as e:
         print(f"❌ Erro ao processar corrida {id_corrida}: {str(e)}")
-       
