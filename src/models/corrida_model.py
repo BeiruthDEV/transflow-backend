@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, BeforeValidator
+from pydantic import BaseModel, Field, BeforeValidator, ConfigDict
 from typing import Optional, Annotated
 
 PyObjectId = Annotated[str, BeforeValidator(str)]
@@ -27,9 +27,10 @@ class CorridaResponse(CorridaBase):
     status: str = "pendente"
     id_corrida: Optional[str] = None
 
-    class Config:
-        populate_by_name = True
-        json_schema_extra = {
+    # Nova sintaxe do Pydantic V2
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
             "example": {
                 "_id": "6512a...",
                 "status": "processada",
@@ -38,3 +39,4 @@ class CorridaResponse(CorridaBase):
                 "forma_pagamento": "DigitalCoin"
             }
         }
+    )
