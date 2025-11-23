@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException # adicionei HTTPException caso precise no futuro, mas o foco é o Redirect
-from fastapi.responses import RedirectResponse # <--- IMPORTANTE: Adicione isso
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware  # <--- IMPORT NECESSÁRIO
 from contextlib import asynccontextmanager
 from typing import List
 import uuid
@@ -31,11 +32,19 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# --- NOVO BLOCO: Redireciona a raiz para /docs ---
+# --- CORREÇÃO DO ERRO DE CONEXÃO (CORS) ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite que o Frontend (porta 80) acesse o Backend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ------------------------------------------
+
 @app.get("/", include_in_schema=False)
 async def root():
     return RedirectResponse(url="/docs")
-# -------------------------------------------------
 
 @app.post("/corridas", response_model=CorridaResponse, status_code=201)
 async def criar_corrida(corrida: CorridaCreate):
@@ -57,7 +66,8 @@ async def criar_corrida(corrida: CorridaCreate):
 @app.get("/corridas", response_model=List[CorridaResponse])
 async def listar_corridas():
     db = await get_database()
-    corridas = await db.corridas.find().to_list(100)
+    # Adicionado sort para trazer as mais recentes primeiro, se quiser
+    corridas = await db.corridas.find().sort("_id", -1).to_list(100)
     return corridas
 
 @app.get("/corridas/{forma_pagamento}", response_model=List[CorridaResponse])
