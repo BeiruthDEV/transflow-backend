@@ -1,0 +1,57 @@
+services:
+  app:
+    build: .
+    container_name: transflow_app
+    ports:
+      - "8000:8000"
+    volumes:
+      # Monta a pasta atual para dentro do container (Hot Reload)
+      - .:/app
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+      - MONGO_DB_NAME=transflow_db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      redis:
+        condition: service_started
+    # Comando explícito para habilitar reload automático
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+
+  mongo:
+    image: mongo:6.0
+    container_name: transflow_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: transflow_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: transflow_rabbitmq
+    ports:
+      - "5672:5672"   # Protocolo AMQP
+      - "15672:15672" # Interface de Gestão (UI)
+    healthcheck:
+      # Verifica se o RabbitMQ está pronto antes de subir o App
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  mongo_data:
+  redis_data:
