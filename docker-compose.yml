@@ -52,11 +52,8 @@ services:
       timeout: 10s
       retries: 5
 
-volumes:
-  mongo_data:
-  redis_data:
-
-frontend:
+  # --- CORREÇÃO: O frontend agora faz parte de 'services' ---
+  frontend:
     build: 
       context: ./frontend
     container_name: transflow_frontend
@@ -64,3 +61,8 @@ frontend:
       - "80:80"  
     depends_on:
       - app
+
+volumes:
+  mongo_data:
+  redis_data:
+  
