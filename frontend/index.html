@@ -3,101 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TransFlow | Dashboard</title>
+    <title>TransFlow | Enterprise</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="min-h-screen p-6">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-hidden">
 
-    <nav class="flex justify-between items-center mb-8">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center font-bold text-white">TF</div>
-            <h1 class="text-2xl font-bold tracking-tight">TransFlow <span class="text-indigo-400">Manager</span></h1>
-        </div>
-        <div class="text-sm text-slate-400 flex items-center gap-2">
-            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Sistema Online
-        </div>
-    </nav>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="flex h-screen">
         
-        <div class="glass p-6 rounded-2xl shadow-xl h-fit">
-            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">🚀 Nova Corrida</h2>
-            <form id="formCorrida" class="space-y-4">
-                <div>
-                    <label class="block text-sm text-slate-400 mb-1">Passageiro</label>
-                    <input type="text" id="passNome" class="input-field" placeholder="Ex: Maria" required>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">Origem</label>
-                        <input type="text" id="origem" value="Centro" class="input-field">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">Destino</label>
-                        <input type="text" id="destino" value="Aeroporto" class="input-field">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">Motorista</label>
-                        <select id="motoristaSelect" class="input-field">
-                            <option value="Joao">Joao</option>
-                            <option value="Carla">Carla</option>
-                            <option value="Pedro">Pedro</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">Valor (R$)</label>
-                        <input type="number" id="valor" value="25.00" step="0.5" class="input-field">
-                    </div>
-                </div>
-                <button type="submit" class="btn-primary w-full py-3 rounded-lg shadow-lg">Solicitar Corrida</button>
-            </form>
-        </div>
-
-        <div class="glass p-6 rounded-2xl shadow-xl lg:col-span-2 flex flex-col h-[500px]">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold">📡 Monitoramento em Tempo Real</h2>
-                <button onclick="carregarCorridas()" class="text-sm text-indigo-400 hover:text-indigo-300">Atualizar</button>
-            </div>
-            
-            <div class="overflow-y-auto pr-2 custom-scrollbar flex-1">
-                <table class="w-full text-left border-collapse">
-                    <thead class="text-slate-400 text-xs uppercase sticky top-0 bg-[#1e293b] z-10">
-                        <tr>
-                            <th class="pb-3 pl-2">Status</th>
-                            <th class="pb-3">Motorista</th>
-                            <th class="pb-3">Passageiro</th>
-                            <th class="pb-3 text-right">Valor</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaCorridas" class="text-sm">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="glass p-6 rounded-2xl shadow-xl lg:col-span-3 flex items-center justify-between bg-gradient-to-r from-slate-800 to-slate-900">
+        <aside class="w-72 bg-[#0f172a] flex flex-col justify-between shadow-2xl z-20">
             <div>
-                <h3 class="text-lg font-semibold text-slate-300">📱 App do Motorista (Simulador)</h3>
-                <p class="text-sm text-slate-500">Saldo atualizado via Redis (Event-Driven)</p>
+                <div class="h-20 flex items-center px-6 border-b border-slate-800/50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-xl">
+                            <i class="ph-fill ph-truck-trailer"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-white font-bold text-lg tracking-tight">TransFlow</h1>
+                            <p class="text-xs text-slate-400 font-medium">ENTERPRISE v2.0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <nav class="p-4 flex flex-col gap-1 mt-4">
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Principal</p>
+                    
+                    <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-item active text-slate-200">
+                        <i class="ph ph-squares-four text-xl"></i>
+                        <span>Visão Geral</span>
+                    </button>
+                    <button onclick="navigateTo('motoristas')" id="nav-motoristas" class="nav-item text-slate-200">
+                        <i class="ph ph-steering-wheel text-xl"></i>
+                        <span>Motoristas</span>
+                    </button>
+                    <button onclick="navigateTo('relatorios')" id="nav-relatorios" class="nav-item text-slate-200">
+                        <i class="ph ph-chart-pie-slice text-xl"></i>
+                        <span>Relatórios</span>
+                    </button>
+
+                    <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 mt-8">Operacional</p>
+                    <div class="px-4 py-3 bg-slate-800/50 rounded-xl border border-slate-700/50 mb-4 mx-2">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span class="text-xs font-bold text-emerald-400 uppercase">Sistema Online</span>
+                        </div>
+                        <p class="text-xs text-slate-400">RabbitMQ & Redis conectados.</p>
+                    </div>
+                </nav>
             </div>
+
+            <div class="p-4 border-t border-slate-800">
+                <button class="flex items-center gap-3 w-full p-2 hover:bg-slate-800 rounded-lg transition text-left">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm">MB</div>
+                    <div>
+                        <p class="text-sm font-semibold text-white">Admin User</p>
+                        <p class="text-xs text-slate-400">Gerente Logístico</p>
+                    </div>
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
             
-            <div class="flex items-center gap-4">
-                <select id="motoristaSaldo" class="bg-slate-700 border-none rounded-lg p-2 text-white outline-none">
-                    <option value="Joao">Motorista: Joao</option>
-                    <option value="Carla">Motorista: Carla</option>
-                </select>
-                <div class="text-right">
-                    <p class="text-xs text-slate-400 uppercase font-bold">Saldo Disponível</p>
-                    <p id="saldoValor" class="text-3xl font-bold text-green-400">R$ 0,00</p>
+            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 shadow-sm z-10 shrink-0">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800" id="page-title">Painel de Controle</h2>
+                    <p class="text-sm text-slate-500">Monitoramento em tempo real da malha urbana.</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="w-10 h-10 rounded-full border border-slate-200 text-slate-500 hover:bg-slate-50 flex items-center justify-center transition">
+                        <i class="ph ph-bell text-xl"></i>
+                    </button>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition shadow-md shadow-indigo-200 flex items-center gap-2">
+                        <i class="ph-bold ph-download-simple"></i> Exportar Dados
+                    </button>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-8 custom-scroll bg-slate-50">
+                <div class="max-w-[1600px] mx-auto">
+
+                    <section id="view-dashboard" class="space-y-6 fade-in">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition">
+                                <div class="absolute right-0 top-0 h-full w-2 bg-indigo-500"></div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Total Transacionado</p>
+                                <h3 id="totalValor" class="text-3xl font-bold text-slate-800 group-hover:text-indigo-600 transition">R$ 0,00</h3>
+                                <div class="mt-4 flex items-center gap-2">
+                                    <span class="bg-emerald-100 text-emerald-700 text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1">
+                                        <i class="ph-bold ph-trend-up"></i> Dinâmico
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition">
+                                <div class="absolute right-0 top-0 h-full w-2 bg-emerald-500"></div>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-1">Corridas Hoje</p>
+                                <h3 id="totalCorridasBadge" class="text-3xl font-bold text-slate-800 group-hover:text-emerald-600 transition">0</h3>
+                                <div class="mt-4 flex items-center gap-2">
+                                    <span class="text-xs text-slate-400">Volume em tempo real</span>
+                                </div>
+                            </div>
+
+                            <div class="bg-[#1e1b4b] p-6 rounded-2xl shadow-lg relative overflow-hidden text-white">
+                                <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-500 rounded-full opacity-20 blur-xl"></div>
+                                <div class="flex justify-between items-start mb-4 relative z-10">
+                                    <div>
+                                        <p class="text-xs text-indigo-200 font-bold uppercase mb-1">Saldo (Redis)</p>
+                                        <select id="motoristaSaldo" class="bg-indigo-900/50 border border-indigo-700/50 text-sm rounded-lg p-1 pr-8 text-white focus:outline-none cursor-pointer hover:bg-indigo-800 transition">
+                                            <option value="Joao">Motorista: Joao</option>
+                                            <option value="Carla">Motorista: Carla</option>
+                                        </select>
+                                    </div>
+                                    <div class="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                                        <i class="ph-fill ph-wallet text-xl text-indigo-300"></i>
+                                    </div>
+                                </div>
+                                <div class="relative z-10">
+                                    <h3 id="saldoValor" class="text-4xl font-bold tracking-tight">R$ 0,00</h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-1">
+                                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+                                    <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                                            <i class="ph-bold ph-paper-plane-right"></i>
+                                        </div>
+                                        <h3 class="font-bold text-slate-800">Solicitar Corrida</h3>
+                                    </div>
+                                    <form id="formCorrida" class="space-y-5">
+                                        <div class="space-y-1.5">
+                                            <label class="text-xs font-bold text-slate-500 uppercase">Passageiro</label>
+                                            <input type="text" id="passNome" class="input-enterprise" placeholder="Nome" required>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="space-y-1.5">
+                                                <label class="text-xs font-bold text-slate-500 uppercase">Origem</label>
+                                                <input type="text" id="origem" value="Centro" class="input-enterprise">
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                <label class="text-xs font-bold text-slate-500 uppercase">Destino</label>
+                                                <input type="text" id="destino" value="Aeroporto" class="input-enterprise">
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="space-y-1.5">
+                                                <label class="text-xs font-bold text-slate-500 uppercase">Motorista</label>
+                                                <select id="motoristaSelect" class="input-enterprise">
+                                                    <option value="Joao">Joao</option>
+                                                    <option value="Carla">Carla</option>
+                                                    <option value="Pedro">Pedro</option>
+                                                </select>
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                <label class="text-xs font-bold text-slate-500 uppercase">Valor</label>
+                                                <input type="number" id="valor" value="25.00" step="0.5" class="input-enterprise font-mono text-indigo-600 font-bold">
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl shadow-lg hover:bg-slate-800 transition">
+                                            Confirmar Solicitação
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-2">
+                                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col h-full min-h-[500px]">
+                                    <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                                        <h3 class="font-bold text-slate-800">Monitoramento de Frota</h3>
+                                        <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full border border-slate-200 flex items-center gap-2">
+                                            <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-pulse"></span> Live
+                                        </span>
+                                    </div>
+                                    <div class="flex-1 overflow-auto">
+                                        <table class="w-full text-left border-collapse">
+                                            <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-bold sticky top-0 z-10">
+                                                <tr>
+                                                    <th class="px-6 py-4 border-b border-slate-200">Status</th>
+                                                    <th class="px-6 py-4 border-b border-slate-200">Motorista</th>
+                                                    <th class="px-6 py-4 border-b border-slate-200">Rota</th>
+                                                    <th class="px-6 py-4 border-b border-slate-200 text-right">Valor</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tabelaCorridas" class="text-sm divide-y divide-slate-100"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="view-motoristas" class="hidden fade-in">
+                        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
+                            <h3 class="text-xl font-bold text-slate-800 mb-6">Desempenho da Frota</h3>
+                            <div class="overflow-hidden rounded-xl border border-slate-200">
+                                <table class="w-full text-left">
+                                    <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-bold">
+                                        <tr>
+                                            <th class="px-6 py-4">Motorista</th>
+                                            <th class="px-6 py-4">Status</th>
+                                            <th class="px-6 py-4 text-center">Corridas Realizadas</th>
+                                            <th class="px-6 py-4 text-right">Faturamento Total</th>
+                                            <th class="px-6 py-4 text-center">Nota Média</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelaMotoristas" class="divide-y divide-slate-100 text-sm">
+                                        </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="view-relatorios" class="hidden fade-in space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            
+                            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
+                                <h3 class="text-lg font-bold text-slate-800 mb-6">Distribuição por Pagamento</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="font-medium text-slate-700">PIX (Instantâneo)</span>
+                                            <span class="font-bold text-indigo-600">85%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 rounded-full h-3">
+                                            <div class="bg-indigo-600 h-3 rounded-full" style="width: 85%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="font-medium text-slate-700">Cartão de Crédito</span>
+                                            <span class="font-bold text-purple-500">10%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 rounded-full h-3">
+                                            <div class="bg-purple-500 h-3 rounded-full" style="width: 10%"></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-1">
+                                            <span class="font-medium text-slate-700">Dinheiro</span>
+                                            <span class="font-bold text-emerald-500">5%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 rounded-full h-3">
+                                            <div class="bg-emerald-500 h-3 rounded-full" style="width: 5%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 flex flex-col justify-center">
+                                <h3 class="text-lg font-bold text-slate-800 mb-2">Ticket Médio por Corrida</h3>
+                                <div class="text-5xl font-bold text-slate-900 mb-2" id="ticketMedio">R$ 0,00</div>
+                                <p class="text-slate-500 text-sm">Baseado em todas as transações registradas no MongoDB.</p>
+                                <div class="mt-8 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                                    <p class="text-indigo-800 text-sm font-semibold">💡 Insight de IA</p>
+                                    <p class="text-indigo-600 text-xs mt-1">O volume de corridas via PIX aumentou 15% nas últimas 2 horas. Considere oferecer promoções para Cartão.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
+    <div id="toast-container" class="fixed bottom-8 right-8 flex flex-col gap-3 z-50"></div>
     <script src="script.js"></script>
 </body>
 </html>
