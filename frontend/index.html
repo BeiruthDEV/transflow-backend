@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransFlow | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen p-6">
+
+    <nav class="flex justify-between items-center mb-8">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center font-bold text-white">TF</div>
+            <h1 class="text-2xl font-bold tracking-tight">TransFlow <span class="text-indigo-400">Manager</span></h1>
+        </div>
+        <div class="text-sm text-slate-400 flex items-center gap-2">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Sistema Online
+        </div>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="glass p-6 rounded-2xl shadow-xl h-fit">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">🚀 Nova Corrida</h2>
+            <form id="formCorrida" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Passageiro</label>
+                    <input type="text" id="passNome" class="input-field" placeholder="Ex: Maria" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">Origem</label>
+                        <input type="text" id="origem" value="Centro" class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">Destino</label>
+                        <input type="text" id="destino" value="Aeroporto" class="input-field">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">Motorista</label>
+                        <select id="motoristaSelect" class="input-field">
+                            <option value="Joao">Joao</option>
+                            <option value="Carla">Carla</option>
+                            <option value="Pedro">Pedro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-1">Valor (R$)</label>
+                        <input type="number" id="valor" value="25.00" step="0.5" class="input-field">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary w-full py-3 rounded-lg shadow-lg">Solicitar Corrida</button>
+            </form>
+        </div>
+
+        <div class="glass p-6 rounded-2xl shadow-xl lg:col-span-2 flex flex-col h-[500px]">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">📡 Monitoramento em Tempo Real</h2>
+                <button onclick="carregarCorridas()" class="text-sm text-indigo-400 hover:text-indigo-300">Atualizar</button>
+            </div>
+            
+            <div class="overflow-y-auto pr-2 custom-scrollbar flex-1">
+                <table class="w-full text-left border-collapse">
+                    <thead class="text-slate-400 text-xs uppercase sticky top-0 bg-[#1e293b] z-10">
+                        <tr>
+                            <th class="pb-3 pl-2">Status</th>
+                            <th class="pb-3">Motorista</th>
+                            <th class="pb-3">Passageiro</th>
+                            <th class="pb-3 text-right">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCorridas" class="text-sm">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="glass p-6 rounded-2xl shadow-xl lg:col-span-3 flex items-center justify-between bg-gradient-to-r from-slate-800 to-slate-900">
+            <div>
+                <h3 class="text-lg font-semibold text-slate-300">📱 App do Motorista (Simulador)</h3>
+                <p class="text-sm text-slate-500">Saldo atualizado via Redis (Event-Driven)</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <select id="motoristaSaldo" class="bg-slate-700 border-none rounded-lg p-2 text-white outline-none">
+                    <option value="Joao">Motorista: Joao</option>
+                    <option value="Carla">Motorista: Carla</option>
+                </select>
+                <div class="text-right">
+                    <p class="text-xs text-slate-400 uppercase font-bold">Saldo Disponível</p>
+                    <p id="saldoValor" class="text-3xl font-bold text-green-400">R$ 0,00</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
