@@ -55,3 +55,12 @@ services:
 volumes:
   mongo_data:
   redis_data:
+
+frontend:
+    build: 
+      context: ./frontend
+    container_name: transflow_frontend
+    ports:
+      - "80:80"  
+    depends_on:
+      - app
