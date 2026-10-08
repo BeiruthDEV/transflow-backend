@@ -78,16 +78,21 @@ O projeto possui uma suíte de testes automatizada utilizando `pytest` e `TestCo
 
 ---
 
-## ⚙️ Arquitetura da Solução
-
-O sistema resolve o problema de **concorrência de saldo** (Race Conditions) utilizando um fluxo orientado a eventos:
-
-1.  **API Gateway:** Recebe `POST /corridas`, salva como `pendente` no Mongo e retorna `201 Created`.
-2.  **Producer:** Publica evento na fila `corridas_queue` (RabbitMQ).
-3.  **Worker:**
-    * Consome a fila assincronamente.
-    * Executa `INCRBYFLOAT` no **Redis** (Operação Atômica).
-    * Atualiza status para `processada` no **MongoDB**.
+## Arquitetura
+ 
+![Arquitetura do TransFlow](assets/arquitetura.png)
+ 
+1. A API recebe a corrida e salva o registro no MongoDB.
+2. Em vez de atualizar o saldo na hora, a API publica um evento no RabbitMQ e já responde ao cliente.
+3. Um worker separado consome o evento.
+4. O worker soma o valor ao saldo do motorista no Redis com uma operação atômica.
+## Decisões técnicas
+ 
+- **Mensageria (RabbitMQ) em vez de atualizar o saldo direto na API:** a API responde rápido e não depende do cálculo do saldo. Se o worker cair, os eventos ficam na fila e são processados quando ele voltar.
+- **Operação atômica no Redis:** duas corridas do mesmo motorista podem chegar ao mesmo tempo. Ler o saldo, somar e gravar em passos separados poderia perder uma das somas (race condition). A operação atômica do Redis faz a soma de uma vez só.
+- **MongoDB para as corridas:** cada corrida é um documento com passageiro, motorista, trajeto e pagamento. O formato de documento encaixa naturalmente nesse dado.
+- **Redis para o saldo:** o saldo é consultado com frequência e precisa de leitura rápida, que é o ponto forte de um banco em memória.
+- **Testes com mocks:** os testes da API substituem MongoDB, RabbitMQ e Redis por mocks, então rodam em segundos e no CI sem precisar subir a infraestrutura.
 
 ---
 
