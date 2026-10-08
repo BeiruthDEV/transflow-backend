@@ -17,6 +17,8 @@
 
 # 🚖 TransFlow API
 
+![CI](https://github.com/BeiruthDEV/transflow-backend/actions/workflows/ci.yml/badge.svg)
+
 > Backend de alta performance para gestão de corridas urbanas com processamento assíncrono, arquitetura de microsserviços e Frontend Enterprise.
 
 Este projeto simula um ecossistema completo de mobilidade urbana (semelhante a Uber/99), onde a alta concorrência de transações e a consistência de dados são tratadas utilizando mensageria (RabbitMQ), cache distribuído (Redis) e persistência NoSQL (MongoDB).
